@@ -6,6 +6,8 @@ import Banner from '../components/Banner';
 import Header from '../components/Header';
 import Modal from '../components/Modal';
 import Plans from '../components/Plans';
+import ContinueWatchingRow from '../components/ContinueWatchingRow';
+import RecommendedRow from '../components/RecommendedRow';
 import Row from '../components/Row';
 import useAuth from '../hooks/useAuth';
 import useList from '../hooks/useList';
@@ -61,11 +63,21 @@ const Home = ({
       <Header />
       <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
         <Banner netflixOriginals={netflixOriginals} />
+        <ContinueWatchingRow />
         <section className="md:space-y-24">
           <Row title="Trending Now" movies={trendingNow} />
+          <Row title="Top 10" movies={trendingNow.slice(0, 10)} />
           <Row title="Top Rated" movies={topRated} />
           <Row title="Action Movies" movies={actionMovies} />
-          {list.length > 0 && <Row title="My List" movies={list} />}
+          {list.length > 0 && (
+            <>
+              <Row title="My List" movies={list} />
+              <RecommendedRow
+                movieId={(list[0] as Movie).id}
+                mediaType={(list[0] as Movie).media_type || 'movie'}
+              />
+            </>
+          )}
           <Row title="Comedy Movies" movies={comedyMovies} />
           <Row title="Horror Movies" movies={horrorMovies} />
           <Row title="Romance Movies" movies={romanceMovies} />

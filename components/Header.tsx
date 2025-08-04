@@ -45,10 +45,12 @@ export default function Header() {
       </div>
 
       <div className="font-light flex items-center space-x-4 text-sm">
-        <SearchIcon className="hidden sm:inline sm:w-6 sm:h-6 cursor-not-allowed" />
+        <Link href="/search">
+          <SearchIcon className="hidden sm:inline sm:w-6 sm:h-6 cursor-pointer" />
+        </Link>
         <p className="hidden lg:inline cursor-not-allowed">Kids</p>
         <BellIcon className="h-6 w-6 cursor-not-allowed" />
-        <Link href="/account">
+        <Link href="/profile">
           <img
             src="https://rb.gy/g1pwyx"
             alt=""
