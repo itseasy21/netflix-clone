@@ -4,6 +4,7 @@ import { CheckIcon } from '@heroicons/react/solid';
 import MuiModal from '@mui/material/Modal';
 import {
   collection,
+  getFirestore,
   deleteDoc,
   doc,
   DocumentData,
@@ -15,7 +16,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import VideasyPlayer from './VideasyPlayer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { modalState, movieState } from '../atoms/modalAtom';
-import { db } from '../firebase';
+import app from '../firebase';
 import useAuth from '../hooks/useAuth';
 import { Genre, Movie } from '../types';
 
@@ -38,6 +39,7 @@ export default function Modal() {
   const [moviesInList, setMoviesInList] = useState<DocumentData[] | Movie[]>(
     []
   );
+  const db = getFirestore(app);
 
   useEffect(() => {
     if (!movie) return;

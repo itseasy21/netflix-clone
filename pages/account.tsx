@@ -1,11 +1,10 @@
-import { getProducts, Product } from '@stripe/firestore-stripe-payments';
+import { Product } from '@stripe/firestore-stripe-payments';
 import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
 import Membership from '../components/Membership';
 import useAuth from '../hooks/useAuth';
 import useSubscription from '../hooks/useSubscription';
-import payments from '../lib/stripe';
 
 interface Props {
   products: Product[];
@@ -83,16 +82,9 @@ export default function Account({ products }: Props) {
 }
 
 export const getStaticProps = async () => {
-  const products = await getProducts(payments, {
-    includePrices: true,
-    activeOnly: true,
-  })
-    .then((res) => res)
-    .catch((err) => console.log(err.message));
-
   return {
     props: {
-      products,
+      products: [] as Product[],
     },
   };
 };
