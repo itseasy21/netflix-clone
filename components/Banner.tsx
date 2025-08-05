@@ -27,7 +27,9 @@ export default function Banner({ netflixOriginals }: Props) {
       <div className="absolute top-0 left-0 h-[95vh] w-screen -z-10">
         <Image
           src={`${baseUrl}/${movie?.backdrop_path || movie?.poster_path}`}
-          alt={movie?.title || movie?.name || movie?.original_name}
+          alt={
+            movie?.title || movie?.name || movie?.original_name || 'Movie poster'
+          }
           layout="fill"
           objectFit="cover"
         />

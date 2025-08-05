@@ -1,10 +1,16 @@
-import { collection, DocumentData, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  DocumentData,
+  onSnapshot,
+  getFirestore,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import app from '../firebase';
 import { Movie } from '../types';
 
 export default function useList(uid: string | undefined) {
   const [list, setList] = useState<Movie[] | DocumentData[]>([]);
+  const db = getFirestore(app);
 
   useEffect(() => {
     if (!uid) return;

@@ -1,9 +1,10 @@
 import { PlusIcon, XIcon } from '@heroicons/react/outline';
 import { ThumbUpIcon } from '@heroicons/react/outline';
-import { CheckIcon, VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
+import { CheckIcon } from '@heroicons/react/solid';
 import MuiModal from '@mui/material/Modal';
 import {
   collection,
+  getFirestore,
   deleteDoc,
   doc,
   DocumentData,
@@ -12,13 +13,12 @@ import {
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { FaPlay } from 'react-icons/fa';
-import ReactPlayer from 'react-player';
+import VideasyPlayer from './VideasyPlayer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { modalState, movieState } from '../atoms/modalAtom';
-import { db } from '../firebase';
+import app from '../firebase';
 import useAuth from '../hooks/useAuth';
-import { Element, Genre, Movie } from '../types';
+import { Genre, Movie } from '../types';
 
 const toastStyle = {
   background: 'white',
@@ -33,14 +33,13 @@ const toastStyle = {
 export default function Modal() {
   const [showModal, setShowModal] = useRecoilState(modalState);
   const movie = useRecoilValue(movieState);
-  const [trailer, setTrailer] = useState<string | null>(null);
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [muted, setMuted] = useState<boolean>(false);
   const [addedToList, setAddedToList] = useState<boolean>(false);
   const { user } = useAuth();
   const [moviesInList, setMoviesInList] = useState<DocumentData[] | Movie[]>(
     []
   );
+  const db = getFirestore(app);
 
   useEffect(() => {
     if (!movie) return;
@@ -55,13 +54,6 @@ export default function Modal() {
       )
         .then((response) => response.json())
         .catch((error) => console.log(error));
-
-      if (data?.videos) {
-        const index = data.videos.results.findIndex(
-          (element: Element) => element.type === 'Trailer'
-        );
-        setTrailer(data.videos?.results[index]?.key);
-      }
 
       if (data?.genres) {
         setGenres(data.genres);
@@ -138,20 +130,18 @@ export default function Modal() {
         </button>
 
         <div className="relative aspect-video">
-          <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${trailer}`}
-            width="100%"
-            height="100%"
-            style={{ position: 'absolute', top: '0', left: '0' }}
-            playing
-            muted={muted}
-          />
+          {movie && (
+            <VideasyPlayer
+              id={movie.id}
+              type={movie.media_type === 'tv' ? 'tv' : 'movie'}
+              nextEpisode
+              autoplayNextEpisode
+              episodeSelector
+              color="e50914"
+            />
+          )}
           <div className="absolute bottom-10 flex w-full items-center justify-between px-10">
             <div className="flex space-x-3">
-              <button className="flex items-center gap-x-2 rounded bg-white px-8 text-xl font-bold text-black transition hover:bg-[#e6e6e6] cursor-not-allowed">
-                <FaPlay className="h-7 w-7 text-black" />
-                Play
-              </button>
               <button className="modalButton" onClick={handleList}>
                 {addedToList ? (
                   <CheckIcon className="h-7 w-7" />
@@ -163,13 +153,6 @@ export default function Modal() {
                 <ThumbUpIcon className="h-7 w-7" />
               </button>
             </div>
-            <button onClick={() => setMuted(!muted)}>
-              {muted ? (
-                <VolumeOffIcon className="h-6 w-6" />
-              ) : (
-                <VolumeUpIcon className="h-6 w-6" />
-              )}
-            </button>
           </div>
         </div>
 
